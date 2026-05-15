@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CertificateView } from "@/components/shared/certificate-view";
+import { ComingSoonButton } from "@/components/shared/coming-soon";
 import { CERTIFICATES, getCertificateById } from "@/data/certificates";
 import { formatDate } from "@/lib/utils";
 
@@ -50,22 +51,22 @@ export default async function CertificadoDetalhePage({ params }: PageProps) {
           <Card>
             <CardContent className="p-5 space-y-3">
               <h3 className="font-semibold">Acções</h3>
-              <Button className="w-full justify-start">
+              <ComingSoonButton className="w-full justify-start">
                 <Download className="h-4 w-4" />
                 Descarregar PDF
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
+              </ComingSoonButton>
+              <ComingSoonButton variant="outline" className="w-full justify-start">
                 <Printer className="h-4 w-4" />
                 Imprimir
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
+              </ComingSoonButton>
+              <ComingSoonButton variant="outline" className="w-full justify-start">
                 <Share2 className="h-4 w-4" />
                 Partilhar link
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
+              </ComingSoonButton>
+              <ComingSoonButton variant="outline" className="w-full justify-start">
                 <Copy className="h-4 w-4" />
                 Copiar código
-              </Button>
+              </ComingSoonButton>
             </CardContent>
           </Card>
 

@@ -21,7 +21,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { CURRENT_USER, COURSE_PROGRESS, RANKING } from "@/data/user";
+import { COURSE_PROGRESS, RANKING } from "@/data/user";
+import { WelcomeGreeting } from "@/components/shared/welcome-greeting";
 import { COURSES, getCourseById } from "@/data/courses";
 import { CERTIFICATES } from "@/data/certificates";
 import { formatDate } from "@/lib/utils";
@@ -44,7 +45,7 @@ export default function PainelPage() {
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Olá, {CURRENT_USER.name.split(" ")[0]}
+            Olá, <WelcomeGreeting />
           </h1>
           <p className="text-muted-foreground mt-1">
             Continue de onde parou — tem 3 cursos em progresso.
@@ -330,4 +331,3 @@ function StatCard({
   );
 }
 
-export const dynamic = "force-static";

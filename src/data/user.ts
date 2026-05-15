@@ -2,7 +2,7 @@ import type { CourseProgress, RankingEntry, User } from "@/types";
 
 export const CURRENT_USER: User = {
   id: "u-001",
-  name: "António Macuácua",
+  name: "Jerry Alafo",
   email: "antonio.macuacua@enautica.ac.mz",
   role: "Oficial Chefe de Navegação",
   vesselType: "Cargueiro de longo curso",
@@ -90,7 +90,7 @@ export const RANKING: RankingEntry[] = [
   {
     rank: 4,
     userId: "u-001",
-    name: "António Macuácua",
+    name: "Jerry Alafo",
     initials: "AM",
     pointsTotal: 3980,
     coursesCompleted: 5,

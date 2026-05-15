@@ -28,11 +28,16 @@ import {
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Logo } from "@/components/shared/logo";
 import { appNavItems } from "@/components/layout/app-sidebar";
-import { CURRENT_USER } from "@/data/user";
 import { cn } from "@/lib/utils";
+import { useSession, signOut } from "next-auth/react";
+import { ComingSoonButton } from "@/components/shared/coming-soon";
 
 export function AppHeader() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const name = session?.user?.name ?? "Utilizador";
+  const role = session?.user?.role ?? "";
+  const initials = name.split(" ").filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase();
 
   return (
     <header className="sticky top-0 z-30 h-16 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -118,10 +123,10 @@ export function AppHeader() {
 
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" aria-label="Notificações" className="relative">
+          <ComingSoonButton variant="ghost" size="icon" aria-label="Notificações" className="relative">
             <Bell className="h-4 w-4" />
             <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary" />
-          </Button>
+          </ComingSoonButton>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -130,15 +135,11 @@ export function AppHeader() {
                 aria-label="Menu do utilizador"
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback>{CURRENT_USER.avatarInitials}</AvatarFallback>
+                  <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
                 <div className="hidden md:block text-left">
-                  <p className="text-sm font-medium leading-none">
-                    {CURRENT_USER.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {CURRENT_USER.role}
-                  </p>
+                  <p className="text-sm font-medium leading-none">{name}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{role}</p>
                 </div>
               </button>
             </DropdownMenuTrigger>
@@ -155,8 +156,8 @@ export function AppHeader() {
                 <Link href="/painel/estatisticas">Estatísticas</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/">Terminar sessão</Link>
+              <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+                Terminar sessão
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

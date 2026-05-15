@@ -23,6 +23,7 @@ import {
 } from "@/data/courses";
 import { COURSE_PROGRESS } from "@/data/user";
 import { getQuizForCourse } from "@/data/quizzes";
+import { ComingSoonButton } from "@/components/shared/coming-soon";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -200,14 +201,14 @@ export default async function PainelCursoPage({ params }: PageProps) {
           <Card>
             <CardContent className="p-5 space-y-4">
               <h3 className="font-semibold">Acções rápidas</h3>
-              <Button className="w-full" size="sm">
+              <ComingSoonButton className="w-full" size="sm">
                 <PlayCircle className="h-4 w-4" />
                 Continuar módulo {completedModules + 1}
-              </Button>
-              <Button variant="outline" className="w-full" size="sm">
+              </ComingSoonButton>
+              <ComingSoonButton variant="outline" className="w-full" size="sm">
                 <Download className="h-4 w-4" />
                 Descarregar para offline
-              </Button>
+              </ComingSoonButton>
             </CardContent>
           </Card>
 

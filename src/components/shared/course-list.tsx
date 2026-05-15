@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CourseCard } from "@/components/shared/course-card";
+import { ComingSoonButton } from "@/components/shared/coming-soon";
 import type { Course } from "@/types";
 import { CATEGORY_LABELS } from "@/data/courses";
 
@@ -53,10 +54,10 @@ export function CourseList({
             className="pl-9"
           />
         </div>
-        <Button variant="outline" className="w-full sm:w-auto">
+        <ComingSoonButton variant="outline" className="w-full sm:w-auto">
           <SlidersHorizontal className="h-4 w-4" />
           Filtros
-        </Button>
+        </ComingSoonButton>
       </div>
 
       <div className="flex flex-wrap gap-2">

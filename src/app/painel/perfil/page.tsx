@@ -30,10 +30,14 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CURRENT_USER } from "@/data/user";
 import { formatDate } from "@/lib/utils";
+import { useComingSoon, ComingSoonButton } from "@/components/shared/coming-soon";
 
 export default function PerfilPage() {
+  const { trigger: openCamera, modal: cameraModal } = useComingSoon();
+
   return (
     <div className="space-y-6 max-w-5xl">
+      {cameraModal}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Perfil</h1>
         <p className="text-muted-foreground mt-1">
@@ -50,7 +54,7 @@ export default function PerfilPage() {
                 {CURRENT_USER.avatarInitials}
               </AvatarFallback>
             </Avatar>
-            <button className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors">
+            <button onClick={openCamera} className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/90 transition-colors">
               <Camera className="h-4 w-4" />
             </button>
           </div>
@@ -73,10 +77,10 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          <Button className="w-full sm:w-auto">
+          <ComingSoonButton className="w-full sm:w-auto">
             <Save className="h-4 w-4" />
             Guardar
-          </Button>
+          </ComingSoonButton>
         </CardContent>
       </Card>
 
@@ -185,7 +189,7 @@ export default function PerfilPage() {
                   <Input id="confirmar" type="password" />
                 </div>
               </div>
-              <Button>Actualizar palavra-passe</Button>
+              <ComingSoonButton>Actualizar palavra-passe</ComingSoonButton>
             </CardContent>
           </Card>
 
@@ -198,7 +202,7 @@ export default function PerfilPage() {
                   Adicione uma camada extra de segurança à sua conta
                 </p>
               </div>
-              <Button variant="outline" className="w-full sm:w-auto">Activar</Button>
+              <ComingSoonButton variant="outline" className="w-full sm:w-auto">Activar</ComingSoonButton>
             </CardContent>
           </Card>
         </TabsContent>

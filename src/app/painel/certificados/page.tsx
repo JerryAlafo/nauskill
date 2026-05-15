@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ComingSoonButton } from "@/components/shared/coming-soon";
 import {
   Award,
   Download,
@@ -97,10 +98,10 @@ export default function CertificadosPage() {
                     Ver certificado
                   </Link>
                 </Button>
-                <Button variant="outline" size="sm">
+                <ComingSoonButton variant="outline" size="sm">
                   <Download className="h-4 w-4" />
                   PDF
-                </Button>
+                </ComingSoonButton>
               </div>
             </CardContent>
           </Card>
