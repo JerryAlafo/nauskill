@@ -1,257 +1,300 @@
 import Link from "next/link";
 import {
   Anchor,
-  ShieldCheck,
-  WifiOff,
-  QrCode,
-  GraduationCap,
-  Globe2,
   ArrowRight,
-  CheckCircle2,
-  Users,
-  BookOpen,
   Award,
+  BookOpen,
+  CheckCircle2,
+  Clock,
+  Globe2,
+  GraduationCap,
+  QrCode,
+  Radio,
+  Search,
+  ShieldCheck,
+  Ship,
+  Star,
+  Users,
+  Waves,
+  WifiOff,
 } from "lucide-react";
 import { MarketingHeader } from "@/components/layout/marketing-header";
 import { MarketingFooter } from "@/components/layout/marketing-footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { COURSES, CATEGORY_LABELS } from "@/data/courses";
+import type { Course } from "@/types";
 
-const features = [
+const popularCourses = [
+  COURSES[0],
+  COURSES[4],
+  COURSES[1],
+  COURSES[5],
+].filter(Boolean);
+
+const academies = [
   {
-    icon: GraduationCap,
-    title: "Microlearning",
-    description:
-      "Sessões curtas e estruturadas, concebidas para utilização real a bordo e em terra.",
+    title: "Tripulação mercante",
+    description: "STCW essencial para oficiais, marinheiros e equipas de convés.",
+    icon: Ship,
+    href: "/cursos",
   },
   {
-    icon: WifiOff,
-    title: "Acesso offline",
-    description:
-      "Conteúdos descarregáveis para utilização em ambientes com conectividade limitada.",
-  },
-  {
-    icon: QrCode,
-    title: "Certificação digital",
-    description:
-      "Certificados verificáveis por QR Code, resistentes a fraude e auditáveis.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Alinhamento STCW",
-    description:
-      "Conteúdos alinhados com a Convenção STCW e exigências regulatórias internacionais.",
-  },
-  {
-    icon: Globe2,
-    title: "Em português",
-    description:
-      "Plataforma concebida para a África Lusófona — uma vantagem competitiva estrutural.",
-  },
-  {
+    title: "Portos e terminais",
+    description: "Segurança, liderança e operação em ambiente portuário.",
     icon: Anchor,
-    title: "Competências emergentes",
-    description:
-      "Ciber-segurança marítima, gestão de emissões, navegação electrónica avançada.",
+    href: "/cursos",
+  },
+  {
+    title: "Offshore e energia",
+    description: "Competências críticas para operações remotas e equipas técnicas.",
+    icon: Waves,
+    href: "/cursos",
+  },
+  {
+    title: "Passageiros e ferry",
+    description: "Gestão de emergência, comunicação e resposta coordenada.",
+    icon: Users,
+    href: "/cursos",
   },
 ];
 
-const stats = [
-  { value: "+50.000", label: "marítimos activos nos PALOP" },
-  { value: "<30%", label: "com formação STCW actualizada" },
-  { value: "70%+", label: "da oferta é cara ou inacessível" },
+const topics = [
+  "Segurança básica",
+  "Proteção marítima",
+  "Combate a incêndios",
+  "Primeiros socorros",
+  "Cibersegurança",
+  "MARPOL",
+  "BRM",
+  "Certificados QR",
 ];
 
-const comparison = [
-  { feature: "Língua de instrução", traditional: "Inglês (maioria)", nauskill: "Português" },
-  { feature: "Acesso offline", traditional: "Não", nauskill: "Sim" },
-  { feature: "Modelo pedagógico", traditional: "Presencial / periódico", nauskill: "Microlearning contínuo" },
-  { feature: "Certificação digital verificável", traditional: "Não", nauskill: "Sim" },
-  { feature: "Competências emergentes", traditional: "Raro", nauskill: "Integradas" },
-  { feature: "Custo", traditional: "Elevado / presencial", nauskill: "Subscrição acessível" },
+const steps = [
+  {
+    title: "Crie a conta",
+    description: "Entre em poucos segundos e comece com um módulo gratuito.",
+  },
+  {
+    title: "Estude onde estiver",
+    description: "Use telemóvel, tablet ou computador, com suporte offline.",
+  },
+  {
+    title: "Faça a avaliação",
+    description: "Responda quizzes curtos com feedback e progresso visível.",
+  },
+  {
+    title: "Receba o certificado",
+    description: "Emissão digital verificável por QR Code e código público.",
+  },
+];
+
+const trustItems = [
+  { icon: ShieldCheck, title: "Alinhado com STCW", text: "Conteúdos pensados para revalidação e conformidade." },
+  { icon: Globe2, title: "Feito para PALOP", text: "Português, contexto local e acesso em baixa conectividade." },
+  { icon: WifiOff, title: "Pronto para bordo", text: "Aulas curtas, descarregáveis e fáceis de retomar." },
+  { icon: QrCode, title: "Verificação pública", text: "Certificados auditáveis por empregadores e reguladores." },
 ];
 
 export default function HomePage() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col overflow-x-hidden">
       <MarketingHeader />
 
       <main className="flex-1">
-        {/* Hero */}
-        <section className="relative overflow-hidden bg-wave-light dark:bg-wave-dark">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-14 sm:py-20 lg:py-28">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-6 animate-fade-in">
+        <section className="relative isolate min-h-[calc(100svh-4rem)] overflow-hidden bg-cyan-950 text-white">
+          <HeroBackdrop />
 
-                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1]">
-                  Formação marítima{" "}
-                  <span className="text-primary">para o futuro</span> do
-                  trabalho a bordo
+          <div className="container relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl items-center px-4 py-12 sm:px-6 lg:px-8">
+            <div className="max-w-3xl space-y-7 py-8">
+              <Badge className="border-white/20 bg-white/10 text-white backdrop-blur">
+                Formação marítima digital em português
+              </Badge>
+
+              <div className="space-y-5">
+                <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl">
+                  Certifique a sua carreira marítima sem sair de bordo.
                 </h1>
-
-                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                  Plataforma digital de upskilling, revalidação STCW e
-                  desenvolvimento profissional para marítimos da África Lusófona
-                  em português, com suporte offline e certificação verificável.
+                <p className="max-w-2xl text-base leading-relaxed text-cyan-50/90 sm:text-lg">
+                  NAUSKILL reúne cursos STCW, competências emergentes e
+                  certificados verificáveis para profissionais marítimos da
+                  África Lusófona.
                 </p>
-
-                <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap">
-                  <Button asChild size="lg" className="w-full sm:w-auto">
-                    <Link href="/registo">
-                      Começar gratuitamente
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="w-full sm:w-auto">
-                    <Link href="/cursos">Ver catálogo</Link>
-                  </Button>
-                </div>
-
-                <div className="flex flex-col gap-2 pt-4 text-xs text-muted-foreground min-[420px]:flex-row min-[420px]:items-center min-[420px]:gap-6">
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-4 w-4 text-primary" />
-                    <span>1 módulo gratuito</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-4 w-4 text-primary" />
-                    <span>Sem cartão de crédito</span>
-                  </div>
-                </div>
               </div>
 
-              {/* Visual lateral: card empilhado mostrando certificado */}
-              <div className="relative hidden lg:block">
-                <div className="absolute -top-4 -right-4 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-                <div className="relative grid gap-4">
-                  <Card className="overflow-hidden border-2 border-primary/20 shadow-xl">
-                    <div className="h-2 bg-primary" />
-                    <CardContent className="p-6 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Award className="h-5 w-5 text-primary" />
-                          <span className="text-xs font-medium tracking-wider text-muted-foreground">
-                            CERTIFICADO DIGITAL
-                          </span>
-                        </div>
-                        <Badge variant="gold" className="text-[10px]">
-                          STCW A-VI/1
-                        </Badge>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Certifica-se que
-                        </p>
-                        <p className="font-semibold text-lg">
-                          António Macuácua
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-2">
-                          concluiu com aproveitamento
-                        </p>
-                        <p className="font-medium text-primary">
-                          Segurança Básica STCW
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between pt-3 border-t text-xs">
-                        <div>
-                          <p className="text-muted-foreground">Serial</p>
-                          <p className="font-mono font-medium">
-                            NSK-2026-000184
-                          </p>
-                        </div>
-                        <div className="h-12 w-12 bg-foreground rounded flex items-center justify-center">
-                          <QrCode className="h-8 w-8 text-background" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <div className="grid grid-cols-3 gap-3">
-                    <Card className="p-3 text-center">
-                      <Users className="h-4 w-4 mx-auto text-primary mb-1" />
-                      <p className="text-xs text-muted-foreground">Alunos</p>
-                      <p className="text-sm font-semibold">200+</p>
-                    </Card>
-                    <Card className="p-3 text-center">
-                      <BookOpen className="h-4 w-4 mx-auto text-primary mb-1" />
-                      <p className="text-xs text-muted-foreground">Cursos</p>
-                      <p className="text-sm font-semibold">12</p>
-                    </Card>
-                    <Card className="p-3 text-center">
-                      <Award className="h-4 w-4 mx-auto text-primary mb-1" />
-                      <p className="text-xs text-muted-foreground">Emitidos</p>
-                      <p className="text-sm font-semibold">340</p>
-                    </Card>
+              <div className="flex max-w-2xl flex-col gap-3 rounded-lg border border-white/15 bg-white/10 p-2 backdrop-blur sm:flex-row">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-cyan-100/70" />
+                  <div className="flex h-11 items-center rounded-md bg-white/95 pl-9 pr-3 text-sm text-cyan-950">
+                    Segurança STCW, cibersegurança, MARPOL...
                   </div>
                 </div>
+                <Button asChild size="lg" className="bg-white text-cyan-900 hover:bg-cyan-50">
+                  <Link href="/cursos">
+                    Ver cursos
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Button asChild size="lg" className="w-full bg-primary text-primary-foreground sm:w-auto">
+                  <Link href="/registo">
+                    Começar gratuitamente
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="w-full border-white/30 bg-white/5 text-white hover:bg-white/10 hover:text-white sm:w-auto"
+                >
+                  <Link href="/verificar">Verificar certificado</Link>
+                </Button>
+              </div>
+
+              <div className="grid max-w-2xl grid-cols-2 gap-3 text-sm min-[520px]:grid-cols-4">
+                <HeroStat value="4.8/5" label="avaliação média" />
+                <HeroStat value="12+" label="cursos piloto" />
+                <HeroStat value="Offline" label="modo de estudo" />
+                <HeroStat value="QR" label="certificação" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Problema */}
-        <section className="border-y bg-muted/30">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-12 sm:py-16">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <Badge variant="outline" className="mb-3">
-                O Problema
-              </Badge>
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                Uma necessidade crítica ainda por resolver
-              </h2>
-              <p className="text-muted-foreground mt-3">
-                O sector marítimo africano enfrenta uma lacuna estrutural na
-                formação contínua e revalidação de competências.
-              </p>
+        <section className="border-b bg-background py-12 sm:py-16">
+          <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div className="max-w-2xl">
+                <Badge variant="outline" className="mb-3">
+                  Cursos populares
+                </Badge>
+                <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                  Comece pelo que é obrigatório a bordo
+                </h2>
+                <p className="mt-2 text-muted-foreground">
+                  Formação curta, prática e organizada para revalidação,
+                  segurança e evolução profissional.
+                </p>
+              </div>
+              <Button asChild variant="outline" className="w-full sm:w-auto">
+                <Link href="/cursos">
+                  Catálogo completo
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {stats.map((s) => (
-                <Card key={s.label} className="text-center">
-                  <CardContent className="p-8">
-                    <p className="text-3xl sm:text-4xl font-bold text-primary mb-2">
-                      {s.value}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{s.label}</p>
-                  </CardContent>
-                </Card>
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+              {popularCourses.map((course) => (
+                <LandingCourseCard key={course.id} course={course} />
               ))}
             </div>
           </div>
         </section>
 
-        {/* Funcionalidades */}
-        <section id="funcionalidades" className="py-14 sm:py-20 lg:py-24">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-            <div className="text-center max-w-2xl mx-auto mb-12">
+        <section className="bg-muted/30 py-12 sm:py-16">
+          <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-8 max-w-2xl">
               <Badge variant="outline" className="mb-3">
-                A solução
+                Academias
               </Badge>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-                Concebida para a realidade do{" "}
-                <span className="text-primary">profissional marítimo</span>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Percursos por área de atuação
               </h2>
-              <p className="text-muted-foreground mt-3">
-                Cada funcionalidade responde a uma exigência real do sector,
-                desde o acesso offline até à conformidade regulatória.
+              <p className="mt-2 text-muted-foreground">
+                Encontre rapidamente a formação certa para o seu contexto de
+                trabalho, seja navio, porto, offshore ou passageiros.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {features.map((f) => {
-                const Icon = f.icon;
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {academies.map((academy) => {
+                const Icon = academy.icon;
                 return (
-                  <Card
-                    key={f.title}
-                    className="group hover:border-primary/40 transition-colors"
+                  <Link
+                    key={academy.title}
+                    href={academy.href}
+                    className="group rounded-lg border bg-card p-5 transition-colors hover:border-primary/50"
                   >
-                    <CardContent className="p-6">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                        <Icon className="h-5 w-5" />
+                    <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-md bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="font-semibold">{academy.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {academy.description}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="funcionalidades" className="py-12 sm:py-16">
+          <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+              <div className="space-y-5">
+                <Badge variant="outline">Como funciona</Badge>
+                <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                  Da inscrição ao certificado em quatro passos
+                </h2>
+                <p className="text-muted-foreground">
+                  A experiência foi desenhada para reduzir fricção: entrar,
+                  estudar, avaliar e apresentar prova digital quando necessário.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {topics.map((topic) => (
+                    <Badge key={topic} variant="secondary">
+                      {topic}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                {steps.map((step, index) => (
+                  <Card key={step.title}>
+                    <CardContent className="p-5">
+                      <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
+                        {index + 1}
                       </div>
-                      <h3 className="font-semibold mb-2">{f.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {f.description}
+                      <h3 className="font-semibold">{step.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                        {step.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="sobre" className="border-y bg-muted/30 py-12 sm:py-16">
+          <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-8 max-w-2xl">
+              <Badge variant="outline" className="mb-3">
+                Diferencial
+              </Badge>
+              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                Uma plataforma feita para a realidade marítima lusófona
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {trustItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Card key={item.title}>
+                    <CardContent className="p-5">
+                      <Icon className="mb-4 h-6 w-6 text-primary" />
+                      <h3 className="font-semibold">{item.title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                        {item.text}
                       </p>
                     </CardContent>
                   </Card>
@@ -261,93 +304,29 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Diferenciação */}
-        <section id="sobre" className="bg-muted/30 border-y py-14 sm:py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <Badge variant="outline" className="mb-3">
-                Diferenciação
-              </Badge>
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                Por que o NAUSKILL?
-              </h2>
-              <p className="text-muted-foreground mt-3">
-                Comparação com a oferta formativa tradicional disponível no
-                mercado.
-              </p>
-            </div>
-
-            <Card className="overflow-hidden max-w-4xl mx-auto">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="text-left px-6 py-4 font-medium">
-                        Característica
-                      </th>
-                      <th className="text-left px-6 py-4 font-medium text-muted-foreground">
-                        Oferta tradicional
-                      </th>
-                      <th className="text-left px-6 py-4 font-medium text-primary">
-                        NAUSKILL
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {comparison.map((row) => (
-                      <tr key={row.feature} className="hover:bg-muted/30">
-                        <td className="px-6 py-4 font-medium">{row.feature}</td>
-                        <td className="px-6 py-4 text-muted-foreground">
-                          {row.traditional}
-                        </td>
-                        <td className="px-6 py-4 text-primary font-medium">
-                          {row.nauskill}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-          </div>
-        </section>
-
-        {/* CTA final */}
-        <section className="py-14 sm:py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-            <Card className="bg-primary text-primary-foreground border-0 overflow-hidden relative">
-              <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full bg-white/10" />
-              <div className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-white/5" />
-              <CardContent className="p-6 sm:p-12 lg:p-16 relative">
-                <div className="max-w-2xl">
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
-                    Pronto para revalidar as suas competências?
+        <section className="py-12 sm:py-16">
+          <div className="container mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <Card className="overflow-hidden border-primary/30 bg-primary text-primary-foreground">
+              <CardContent className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+                    Pronto para começar a sua próxima revalidação?
                   </h2>
-                  <p className="text-primary-foreground/90 text-base sm:text-lg mb-8">
-                    Comece com um módulo gratuito. Sem compromisso, sem cartão
-                    de crédito.
+                  <p className="mt-3 max-w-2xl text-primary-foreground/90">
+                    Entre na plataforma, faça o primeiro módulo e veja como os
+                    certificados digitais funcionam na prática.
                   </p>
-                  <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                    <Button
-                      asChild
-                      size="lg"
-                      variant="secondary"
-                      className="w-full bg-white text-primary hover:bg-white/90 sm:w-auto"
-                    >
-                      <Link href="/registo">
-                        Criar conta gratuita
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button
-                      asChild
-                      size="lg"
-                      variant="outline"
-                      className="w-full border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white sm:w-auto"
-                    >
-                      <Link href="/cursos">Explorar cursos</Link>
-                    </Button>
-                  </div>
+                </div>
+                <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+                  <Button asChild size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90">
+                    <Link href="/registo">
+                      Criar conta
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white">
+                    <Link href="/login">Entrar</Link>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -357,5 +336,116 @@ export default function HomePage() {
 
       <MarketingFooter />
     </div>
+  );
+}
+
+function HeroBackdrop() {
+  return (
+    <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(8,51,68,0.98)_0%,rgba(14,116,144,0.86)_46%,rgba(201,162,39,0.48)_100%)]" />
+      <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,0.14)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.14)_1px,transparent_1px)] [background-size:64px_64px]" />
+      <div className="absolute bottom-0 left-0 right-0 h-36 bg-[linear-gradient(0deg,rgba(8,51,68,0.95),transparent)]" />
+
+      <div className="absolute right-[-8rem] top-24 hidden w-[44rem] rotate-[-8deg] gap-4 lg:grid">
+        <div className="rounded-lg border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-medium text-white">
+              <Radio className="h-4 w-4 text-cyan-200" />
+              Painel de treino
+            </div>
+            <Badge className="border-white/20 bg-white/10 text-white">AO VIVO</Badge>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {["STCW", "ISPS", "MARPOL"].map((label, index) => (
+              <div key={label} className="rounded-md border border-white/10 bg-white/10 p-3">
+                <p className="text-xs text-cyan-50/70">{label}</p>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/15">
+                  <div
+                    className="h-full rounded-full bg-cyan-200"
+                    style={{ width: `${82 - index * 17}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="ml-16 grid grid-cols-2 gap-4">
+          <div className="rounded-lg border border-white/15 bg-white/10 p-5 backdrop-blur">
+            <Award className="mb-8 h-7 w-7 text-gold-light" />
+            <p className="text-sm font-semibold text-white">Certificado digital</p>
+            <p className="mt-1 font-mono text-xs text-cyan-50/70">NSK-2026-000184</p>
+          </div>
+          <div className="rounded-lg border border-white/15 bg-white/10 p-5 backdrop-blur">
+            <QrCode className="mb-8 h-7 w-7 text-cyan-100" />
+            <p className="text-sm font-semibold text-white">Verificação QR</p>
+            <p className="mt-1 text-xs text-cyan-50/70">pública e auditável</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HeroStat({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="rounded-md border border-white/15 bg-white/10 p-3 backdrop-blur">
+      <p className="font-semibold text-white">{value}</p>
+      <p className="mt-1 text-xs text-cyan-50/75">{label}</p>
+    </div>
+  );
+}
+
+function LandingCourseCard({ course }: { course: Course }) {
+  return (
+    <Card className="h-full overflow-hidden transition-colors hover:border-primary/50">
+      <div
+        className="flex h-28 items-center justify-center text-white"
+        style={{ backgroundColor: `hsl(${course.thumbnailHue})` }}
+      >
+        <GraduationCap className="h-10 w-10" />
+      </div>
+      <CardContent className="flex h-[calc(100%-7rem)] flex-col p-5">
+        <div className="mb-3 flex flex-wrap gap-2">
+          <Badge variant="outline" className="text-[10px]">
+            {CATEGORY_LABELS[course.category]}
+          </Badge>
+          {course.stcwReference && (
+            <Badge variant="secondary" className="text-[10px]">
+              {course.stcwReference}
+            </Badge>
+          )}
+        </div>
+
+        <h3 className="font-semibold leading-tight">{course.title}</h3>
+        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+          {course.shortDescription}
+        </p>
+
+        <div className="mt-auto space-y-4 pt-5">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              {course.durationHours}h
+            </span>
+            <span className="flex items-center gap-1">
+              <Star className="h-3 w-3 fill-current text-amber-500" />
+              {course.rating.toFixed(1)}
+            </span>
+            <span className="flex items-center gap-1">
+              <BookOpen className="h-3 w-3" />
+              {course.moduleCount} módulos
+            </span>
+          </div>
+
+          <Button asChild className="w-full" variant={course.isPremium ? "outline" : "default"}>
+            <Link href={`/cursos/${course.slug}`}>
+              Ver detalhes
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
