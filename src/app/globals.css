@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Modo claro — branco + ciano ESCN */
+    --background: 0 0% 100%;
+    --foreground: 200 30% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 200 30% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 30% 12%;
+
+    /* Primário = ciano ESCN (escuro suficiente para WCAG sobre branco) */
+    --primary: 192 91% 27%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 192 60% 96%;
+    --secondary-foreground: 192 91% 22%;
+
+    --muted: 200 20% 96%;
+    --muted-foreground: 200 12% 42%;
+
+    --accent: 192 70% 94%;
+    --accent-foreground: 192 91% 22%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 200 20% 90%;
+    --input: 200 20% 90%;
+    --ring: 192 91% 35%;
+
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    /* Modo escuro — preserva o ciano como acento sobre fundo profundo */
+    --background: 200 35% 7%;
+    --foreground: 192 30% 95%;
+
+    --card: 200 30% 10%;
+    --card-foreground: 192 30% 95%;
+
+    --popover: 200 30% 10%;
+    --popover-foreground: 192 30% 95%;
+
+    --primary: 192 85% 55%;
+    --primary-foreground: 200 50% 10%;
+
+    --secondary: 200 25% 16%;
+    --secondary-foreground: 192 30% 95%;
+
+    --muted: 200 25% 14%;
+    --muted-foreground: 192 15% 65%;
+
+    --accent: 200 30% 18%;
+    --accent-foreground: 192 30% 95%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 200 25% 18%;
+    --input: 200 25% 18%;
+    --ring: 192 85% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Scrollbar discreta */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/40;
+  }
+}
+
+@layer utilities {
+  .text-gold {
+    color: #c9a227;
+  }
+  .bg-gold {
+    background-color: #c9a227;
+  }
+  .border-gold {
+    border-color: #c9a227;
+  }
+
+  /* Fundo "ondas" decorativo, muito subtil, para hero */
+  .bg-wave-light {
+    background-image: radial-gradient(
+        circle at 20% 30%,
+        rgba(8, 145, 178, 0.06) 0%,
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 80% 70%,
+        rgba(8, 145, 178, 0.05) 0%,
+        transparent 45%
+      );
+  }
+
+  .bg-wave-dark {
+    background-image: radial-gradient(
+        circle at 20% 30%,
+        rgba(34, 211, 238, 0.08) 0%,
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 80% 70%,
+        rgba(34, 211, 238, 0.06) 0%,
+        transparent 45%
+      );
+  }
+}
