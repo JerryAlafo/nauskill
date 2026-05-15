@@ -40,7 +40,7 @@ export const COURSES: Course[] = [
     instructor: "Eng. Lucas Lima",
     rating: 4.9,
     enrolledCount: 96,
-    thumbnailHue: "10 70% 50%",
+    thumbnailHue: "204 82% 42%",
     tags: ["Avançado", "STCW", "Comando"],
   },
   {
@@ -61,7 +61,7 @@ export const COURSES: Course[] = [
     instructor: "Dra. Alice Zefanias",
     rating: 4.7,
     enrolledCount: 128,
-    thumbnailHue: "350 70% 50%",
+    thumbnailHue: "214 72% 46%",
     tags: ["Saúde", "STCW", "Obrigatório"],
   },
   {
@@ -103,7 +103,7 @@ export const COURSES: Course[] = [
     instructor: "Eng. Lucas Lima",
     rating: 4.5,
     enrolledCount: 156,
-    thumbnailHue: "45 90% 45%",
+    thumbnailHue: "188 78% 36%",
     tags: ["ISPS", "STCW", "Segurança"],
   },
   {
@@ -123,7 +123,7 @@ export const COURSES: Course[] = [
     instructor: "Jerry Alafo",
     rating: 4.9,
     enrolledCount: 64,
-    thumbnailHue: "260 60% 50%",
+    thumbnailHue: "226 64% 45%",
     tags: ["Cyber", "Emergente", "IMO"],
   },
   {
@@ -143,7 +143,7 @@ export const COURSES: Course[] = [
     instructor: "Eng. Lucas Lima",
     rating: 4.7,
     enrolledCount: 48,
-    thumbnailHue: "140 50% 40%",
+    thumbnailHue: "198 62% 38%",
     tags: ["MARPOL", "Emergente", "Sustentabilidade"],
   },
   {
