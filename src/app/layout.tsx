@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "NAUSKILL — Plataforma Africana de Formação Marítima",
   description:
     "Upskilling, revalidação STCW e desenvolvimento profissional para marítimos. Em português, com suporte offline.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
