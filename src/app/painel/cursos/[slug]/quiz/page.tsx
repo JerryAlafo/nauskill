@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -11,6 +11,8 @@ import {
   Award,
   RefreshCcw,
   Clock,
+  Sparkles,
+  AlertCircle,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,27 +22,106 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { getCourseBySlug } from "@/data/courses";
 import { getQuizForCourse } from "@/data/quizzes";
+import type { Quiz } from "@/types";
 
 export default function QuizPage() {
-  const router = useRouter();
   const params = useParams<{ slug: string }>();
   const course = getCourseBySlug(params.slug);
-  const quiz = course ? getQuizForCourse(course.id) : undefined;
+  const staticQuiz = course ? getQuizForCourse(course.id) : undefined;
 
-  const [stage, setStage] = React.useState<"intro" | "running" | "result">(
-    "intro"
-  );
+  const [quiz, setQuiz] = React.useState<Quiz | undefined>(staticQuiz);
+  const [generating, setGenerating] = React.useState(!staticQuiz && !!course);
+  const [genError, setGenError] = React.useState("");
+
+  const [stage, setStage] = React.useState<"intro" | "running" | "result">("intro");
   const [currentIdx, setCurrentIdx] = React.useState(0);
   const [answers, setAnswers] = React.useState<Record<string, number>>({});
   const [showFeedback, setShowFeedback] = React.useState(false);
 
-  if (!course || !quiz) {
+  React.useEffect(() => {
+    if (!staticQuiz && course) {
+      setGenerating(true);
+      fetch("/api/quiz/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseId: course.id,
+          title: course.title,
+          description: course.description,
+          stcwReference: course.stcwReference,
+        }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.error) throw new Error(data.error);
+          setQuiz(data);
+        })
+        .catch((e) => setGenError(e.message ?? "Erro ao gerar quiz."))
+        .finally(() => setGenerating(false));
+    }
+  }, [course, staticQuiz]);
+
+  if (!course) {
+    return <div className="max-w-3xl"><p>Curso não encontrado.</p></div>;
+  }
+
+  // Ecrã de geração por IA
+  if (generating) {
     return (
-      <div className="max-w-3xl">
-        <p>Quiz não disponível.</p>
+      <div className="max-w-3xl mx-auto">
+        <Card>
+          <CardContent className="p-8 text-center space-y-6">
+            <div className="relative h-16 w-16 mx-auto">
+              <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+              <div className="relative h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <Sparkles className="h-8 w-8 text-primary animate-pulse" />
+              </div>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold">A IA está a preparar o seu quiz</h2>
+              <p className="text-muted-foreground mt-2 max-w-sm mx-auto">
+                A gerar perguntas personalizadas sobre <span className="font-medium text-foreground">{course.title}</span>. Aguarde um momento…
+              </p>
+            </div>
+            <div className="flex justify-center gap-1.5 pt-2">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="h-2 w-2 rounded-full bg-primary animate-bounce"
+                  style={{ animationDelay: `${i * 150}ms` }}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
+
+  // Erro na geração
+  if (genError) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-4">
+        <Link href={`/painel/cursos/${course.slug}`} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="h-4 w-4" />Voltar ao curso
+        </Link>
+        <Card className="border-destructive/40">
+          <CardContent className="p-8 text-center space-y-4">
+            <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
+            <div>
+              <h2 className="text-lg font-semibold">Não foi possível gerar o quiz</h2>
+              <p className="text-sm text-muted-foreground mt-1">{genError}</p>
+            </div>
+            <Button onClick={() => { setGenError(""); setGenerating(true); }}>
+              <RefreshCcw className="h-4 w-4" />Tentar novamente
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!quiz) return null;
 
   const currentQuestion = quiz.questions[currentIdx];
   const totalQuestions = quiz.questions.length;
@@ -96,9 +177,14 @@ export default function QuizPage() {
               <Award className="h-8 w-8" />
             </div>
             <div>
-              <Badge variant="outline" className="mb-3">
-                Avaliação final
-              </Badge>
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Badge variant="outline">Avaliação final</Badge>
+                {!staticQuiz && (
+                  <Badge variant="secondary" className="gap-1">
+                    <Sparkles className="h-3 w-3" />Gerado por IA
+                  </Badge>
+                )}
+              </div>
               <h1 className="text-2xl font-bold">{quiz.title}</h1>
               <p className="text-muted-foreground mt-2 max-w-md mx-auto">
                 Conclua com sucesso para receber o certificado digital.
@@ -176,6 +262,7 @@ export default function QuizPage() {
             </h2>
 
             <RadioGroup
+              key={currentIdx}
               value={selectedAnswer?.toString()}
               onValueChange={handleSelect}
               disabled={showFeedback}

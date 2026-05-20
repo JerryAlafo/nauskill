@@ -11,6 +11,8 @@ import {
   ChevronRight,
   Download,
   WifiOff,
+  Sparkles,
+  BrainCircuit,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -173,25 +175,29 @@ export default async function PainelCursoPage({ params }: PageProps) {
                 </div>
               ))}
 
-              {/* Avaliação final */}
-              {quiz && (
-                <div className="p-4 flex flex-wrap items-center gap-3 bg-gold/5 sm:gap-4">
-                  <Award className="h-5 w-5 text-gold shrink-0" />
-                  <div className="flex-1 min-w-0">
+              {/* Avaliação final — sempre visível */}
+              <div className="p-4 flex flex-wrap items-center gap-3 bg-gold/5 sm:gap-4">
+                <Award className="h-5 w-5 text-gold shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-medium text-sm">Avaliação final</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {quiz.questions.length} perguntas · nota mínima{" "}
-                      {quiz.passingScore}%
-                    </p>
+                    {!quiz && (
+                      <Badge variant="secondary" className="text-[10px] gap-1 py-0">
+                        <Sparkles className="h-2.5 w-2.5" />Gerado por IA
+                      </Badge>
+                    )}
                   </div>
-                  <Button asChild size="sm" className="w-full sm:w-auto">
-                    <Link href={`/painel/cursos/${course.slug}/quiz`}>
-                      {progressPercent === 100 ? "Refazer" : "Tentar"}
-                      <ChevronRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {quiz ? `${quiz.questions.length} perguntas · nota mínima ${quiz.passingScore}%` : "6 perguntas geradas por IA · nota mínima 70%"}
+                  </p>
                 </div>
-              )}
+                <Button asChild size="sm" className="w-full sm:w-auto">
+                  <Link href={`/painel/cursos/${course.slug}/quiz`}>
+                    {progressPercent === 100 ? "Refazer" : "Iniciar quiz"}
+                    <ChevronRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -199,9 +205,15 @@ export default async function PainelCursoPage({ params }: PageProps) {
         {/* Sidebar direita */}
         <aside className="space-y-6">
           <Card>
-            <CardContent className="p-5 space-y-4">
+            <CardContent className="p-5 space-y-3">
               <h3 className="font-semibold">Acções rápidas</h3>
-              <ComingSoonButton className="w-full" size="sm">
+              <Button asChild className="w-full" size="sm">
+                <Link href={`/painel/cursos/${course.slug}/quiz`}>
+                  <BrainCircuit className="h-4 w-4" />
+                  {quiz ? "Fazer avaliação" : "Quiz gerado por IA"}
+                </Link>
+              </Button>
+              <ComingSoonButton className="w-full" size="sm" variant="outline">
                 <PlayCircle className="h-4 w-4" />
                 Continuar módulo {completedModules + 1}
               </ComingSoonButton>

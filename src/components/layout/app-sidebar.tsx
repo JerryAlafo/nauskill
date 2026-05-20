@@ -11,6 +11,7 @@ import {
   User,
   LogOut,
   Anchor,
+  BrainCircuit,
 } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ import { signOut } from "next-auth/react";
 export const appNavItems = [
   { href: "/painel", label: "Painel", icon: LayoutDashboard },
   { href: "/painel/cursos", label: "Os meus cursos", icon: BookOpen },
+  { href: "/painel/quiz", label: "Quiz IA", icon: BrainCircuit },
   { href: "/painel/certificados", label: "Certificados", icon: Award },
   { href: "/painel/ranking", label: "Ranking", icon: Trophy },
   { href: "/painel/estatisticas", label: "Estatísticas", icon: BarChart3 },
