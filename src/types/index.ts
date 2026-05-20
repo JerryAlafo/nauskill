@@ -1,6 +1,10 @@
 export type CourseCategory =
   | "stcw-basic"
   | "stcw-advanced"
+  | "stcw-officer"
+  | "tanker"
+  | "passenger"
+  | "polar"
   | "emerging"
   | "leadership";
 
