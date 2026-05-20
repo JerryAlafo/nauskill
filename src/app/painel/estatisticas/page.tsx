@@ -17,9 +17,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { COURSE_PROGRESS } from "@/data/user";
-import { COURSES, getCourseById, CATEGORY_LABELS } from "@/data/courses";
+import { getCourseById, CATEGORY_LABELS } from "@/data/courses";
+import {
+  WeeklyActivityChart,
+  MonthlyProgressChart,
+  CategoryRadialChart,
+} from "@/components/shared/stats-charts";
 
-// Dados mockados de actividade semanal (horas/dia, segunda → domingo)
 const WEEKLY_ACTIVITY = [
   { day: "Seg", hours: 1.5 },
   { day: "Ter", hours: 2.2 },
@@ -38,6 +42,17 @@ const MONTHLY_PROGRESS = [
   { month: "Mai", completed: 5 },
 ];
 
+const CATEGORY_COLORS: Record<string, string> = {
+  "stcw-basic":    "hsl(192 91% 35%)",
+  "stcw-advanced": "hsl(210 80% 45%)",
+  "stcw-officer":  "hsl(225 70% 50%)",
+  tanker:          "hsl(38 92% 50%)",
+  passenger:       "hsl(160 60% 40%)",
+  polar:           "hsl(200 70% 55%)",
+  emerging:        "hsl(270 60% 55%)",
+  leadership:      "hsl(340 70% 50%)",
+};
+
 export default function EstatisticasPage() {
   const completed = COURSE_PROGRESS.filter((p) => p.status === "completed");
   const inProgress = COURSE_PROGRESS.filter((p) => p.status === "in-progress");
@@ -46,22 +61,22 @@ export default function EstatisticasPage() {
     return acc + (c?.durationHours ?? 0);
   }, 0);
 
-  // Cálculo de distribuição por categoria
   const categoryDist = COURSE_PROGRESS.reduce<Record<string, number>>(
     (acc, p) => {
       const c = getCourseById(p.courseId);
-      if (c) {
-        acc[c.category] = (acc[c.category] || 0) + 1;
-      }
+      if (c) acc[c.category] = (acc[c.category] || 0) + 1;
       return acc;
     },
     {}
   );
 
-  const totalEnrolled = COURSE_PROGRESS.length;
+  const categoryRadialData = Object.entries(categoryDist).map(([cat, count]) => ({
+    name: CATEGORY_LABELS[cat] ?? cat,
+    value: count,
+    fill: CATEGORY_COLORS[cat] ?? "hsl(192 91% 35%)",
+  }));
 
-  const maxHours = Math.max(...WEEKLY_ACTIVITY.map((d) => d.hours));
-  const maxMonthly = Math.max(...MONTHLY_PROGRESS.map((m) => m.completed));
+  const weeklyTotal = WEEKLY_ACTIVITY.reduce((a, d) => a + d.hours, 0).toFixed(1);
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -77,9 +92,7 @@ export default function EstatisticasPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                Horas totais
-              </p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Horas totais</p>
               <Clock className="h-4 w-4 text-primary" />
             </div>
             <p className="text-2xl font-bold">{totalHours}h</p>
@@ -93,39 +106,29 @@ export default function EstatisticasPage() {
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                Cursos concluídos
-              </p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Cursos concluídos</p>
               <BookOpen className="h-4 w-4 text-primary" />
             </div>
             <p className="text-2xl font-bold">{completed.length}</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {inProgress.length} em progresso
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">{inProgress.length} em progresso</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                Certificados
-              </p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Certificados</p>
               <Award className="h-4 w-4 text-gold" />
             </div>
             <p className="text-2xl font-bold">2</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Todos válidos · STCW
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Todos válidos · STCW</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="p-5">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                Sequência
-              </p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Sequência</p>
               <Flame className="h-4 w-4 text-amber-500" />
             </div>
             <p className="text-2xl font-bold">14</p>
@@ -134,69 +137,28 @@ export default function EstatisticasPage() {
         </Card>
       </div>
 
+      {/* Gráficos principais */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Actividade semanal — gráfico de barras */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Actividade semanal</CardTitle>
             <CardDescription>
               Horas de estudo nos últimos 7 dias · Total{" "}
-              <span className="font-semibold text-foreground">
-                {WEEKLY_ACTIVITY.reduce((a, d) => a + d.hours, 0).toFixed(1)}h
-              </span>
+              <span className="font-semibold text-foreground">{weeklyTotal}h</span>
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-end justify-between gap-2 h-48">
-              {WEEKLY_ACTIVITY.map((d) => {
-                const heightPct = (d.hours / maxHours) * 100;
-                return (
-                  <div
-                    key={d.day}
-                    className="flex-1 flex flex-col items-center gap-2 group"
-                  >
-                    <div className="text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      {d.hours}h
-                    </div>
-                    <div className="w-full flex-1 flex items-end">
-                      <div
-                        className="w-full bg-primary/20 group-hover:bg-primary/40 rounded-t-md transition-colors relative overflow-hidden"
-                        style={{ height: `${heightPct}%` }}
-                      >
-                        <div className="absolute inset-x-0 bottom-0 bg-primary h-1" />
-                      </div>
-                    </div>
-                    <span className="text-xs text-muted-foreground">{d.day}</span>
-                  </div>
-                );
-              })}
-            </div>
+          <CardContent className="pt-0">
+            <WeeklyActivityChart data={WEEKLY_ACTIVITY} />
           </CardContent>
         </Card>
 
-        {/* Distribuição por categoria */}
         <Card>
           <CardHeader>
             <CardTitle>Por categoria</CardTitle>
-            <CardDescription>Cursos inscritos</CardDescription>
+            <CardDescription>Distribuição de cursos inscritos</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {Object.entries(categoryDist).map(([cat, count]) => {
-              const pct = (count / totalEnrolled) * 100;
-              return (
-                <div key={cat} className="space-y-1.5">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">
-                      {CATEGORY_LABELS[cat] ?? cat}
-                    </span>
-                    <span className="text-muted-foreground">
-                      {count} · {Math.round(pct)}%
-                    </span>
-                  </div>
-                  <Progress value={pct} className="h-2" />
-                </div>
-              );
-            })}
+          <CardContent className="pt-0">
+            <CategoryRadialChart data={categoryRadialData} />
           </CardContent>
         </Card>
       </div>
@@ -209,80 +171,12 @@ export default function EstatisticasPage() {
             Cursos concluídos por mês nos últimos 5 meses
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <svg
-            viewBox="0 0 500 200"
-            className="w-full h-48"
-            preserveAspectRatio="none"
-          >
-            {/* Linha de base */}
-            <line
-              x1="40"
-              y1="170"
-              x2="490"
-              y2="170"
-              stroke="currentColor"
-              strokeOpacity="0.2"
-            />
-            {/* Pontos e linha */}
-            {(() => {
-              const points = MONTHLY_PROGRESS.map((m, i) => {
-                const x = 60 + (i * 420) / (MONTHLY_PROGRESS.length - 1);
-                const y = 170 - (m.completed / maxMonthly) * 130;
-                return { x, y, ...m };
-              });
-              const pathD = points
-                .map((p, i) => (i === 0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`))
-                .join(" ");
-              return (
-                <>
-                  {/* Área sombreada */}
-                  <path
-                    d={`${pathD} L${points[points.length - 1].x},170 L${points[0].x},170 Z`}
-                    fill="hsl(192 91% 35%)"
-                    fillOpacity="0.1"
-                  />
-                  <path
-                    d={pathD}
-                    fill="none"
-                    stroke="hsl(192 91% 35%)"
-                    strokeWidth="2.5"
-                  />
-                  {points.map((p, i) => (
-                    <g key={i}>
-                      <circle
-                        cx={p.x}
-                        cy={p.y}
-                        r="5"
-                        fill="hsl(192 91% 35%)"
-                      />
-                      <circle cx={p.x} cy={p.y} r="2" fill="white" />
-                      <text
-                        x={p.x}
-                        y={p.y - 12}
-                        textAnchor="middle"
-                        className="text-xs font-medium fill-current"
-                      >
-                        {p.completed}
-                      </text>
-                      <text
-                        x={p.x}
-                        y={188}
-                        textAnchor="middle"
-                        className="text-xs fill-muted-foreground"
-                      >
-                        {p.month}
-                      </text>
-                    </g>
-                  ))}
-                </>
-              );
-            })()}
-          </svg>
+        <CardContent className="pt-0">
+          <MonthlyProgressChart data={MONTHLY_PROGRESS} />
         </CardContent>
       </Card>
 
-      {/* Metas + próximos passos */}
+      {/* Metas + datas */}
       <div className="grid lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -290,9 +184,7 @@ export default function EstatisticasPage() {
               <Target className="h-5 w-5 text-primary" />
               Meta do trimestre
             </CardTitle>
-            <CardDescription>
-              Concluir 6 cursos até ao fim de Junho
-            </CardDescription>
+            <CardDescription>Concluir 6 cursos até ao fim de Junho</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex flex-col gap-2 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
@@ -319,9 +211,7 @@ export default function EstatisticasPage() {
             <div className="flex flex-col gap-2 border-b pb-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="font-medium">Revalidação STCW A-VI/3</p>
-                <p className="text-xs text-muted-foreground">
-                  Combate avançado a incêndios
-                </p>
+                <p className="text-xs text-muted-foreground">Combate avançado a incêndios</p>
               </div>
               <Badge variant="warning">Em 8 meses</Badge>
             </div>
