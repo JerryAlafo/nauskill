@@ -12,7 +12,8 @@ interface CertificateViewProps {
 
 export function CertificateView({
   certificate,
-  verifyBaseUrl = "https://nauskill.mz/verificar",
+  // verifyBaseUrl = "https://nauskill.mz/verificar",
+  verifyBaseUrl = "https://nauskill.vercel.app/verificar",
 }: CertificateViewProps) {
   const verifyUrl = `${verifyBaseUrl}/${certificate.verificationCode}`;
 

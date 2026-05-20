@@ -12,9 +12,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        turnstileToken: { label: "Turnstile", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
+
+        // Valida Turnstile apenas se a secret key estiver configurada
+        const secret = process.env.TURNSTILE_SECRET_KEY
+        if (secret) {
+          const res = await fetch(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ secret, response: credentials.turnstileToken }),
+            }
+          )
+          const { success } = await res.json()
+          if (!success) return null
+        }
 
         const { data, error } = await supabaseAdmin.auth.signInWithPassword({
           email: credentials.email as string,
@@ -98,6 +114,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     async session({ session, token }) {
       session.user.id = token.id as string
+      session.user.name = (token.name as string) ?? session.user.name ?? ""
       session.user.role = (token.role as string) ?? ""
       session.user.needsOnboarding = (token.needsOnboarding as boolean) ?? false
       return session

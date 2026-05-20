@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { Eye, EyeOff, Lock, Mail, ArrowRight, Anchor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,12 +36,14 @@ function LoginForm() {
   const [loading, setLoading] = React.useState(false);
   const [googleLoading, setGoogleLoading] = React.useState(false);
   const [error, setError] = React.useState("");
+  const [turnstileToken, setTurnstileToken] = React.useState("");
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const result = await signIn("credentials", { email, password, redirect: false });
+    const result = await signIn("credentials", { email, password, turnstileToken, redirect: false });
     if (result?.error) {
       setError("Email ou palavra-passe incorretos.");
       setLoading(false);
@@ -102,7 +105,20 @@ function LoginForm() {
                 </button>
               </div>
             </div>
-            <Button type="submit" className="w-full" disabled={loading || googleLoading}>
+            {siteKey && (
+              <Turnstile
+                siteKey={siteKey}
+                onSuccess={setTurnstileToken}
+                onExpire={() => setTurnstileToken("")}
+                options={{ theme: "auto", size: "flexible" }}
+              />
+            )}
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading || googleLoading || (!!siteKey && !turnstileToken)}
+            >
               {loading ? "A entrar…" : "Entrar"}
               {!loading && <ArrowRight className="h-4 w-4" />}
             </Button>

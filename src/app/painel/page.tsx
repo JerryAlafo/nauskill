@@ -26,8 +26,25 @@ import { WelcomeGreeting } from "@/components/shared/welcome-greeting";
 import { COURSES, getCourseById } from "@/data/courses";
 import { CERTIFICATES } from "@/data/certificates";
 import { formatDate } from "@/lib/utils";
+import { auth } from "@/auth";
 
-export default function PainelPage() {
+export default async function PainelPage() {
+  const session = await auth();
+  const realName = session?.user?.name ?? "";
+  const realInitials = realName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
+  const ranking = RANKING.map((r) =>
+    r.isCurrentUser && realName
+      ? { ...r, name: realName, initials: realInitials || r.initials }
+      : r
+  );
+
   const inProgress = COURSE_PROGRESS.filter(
     (p) => p.status === "in-progress"
   ).slice(0, 3);
@@ -37,7 +54,7 @@ export default function PainelPage() {
     return acc + (c?.durationHours ?? 0);
   }, 0);
 
-  const currentUserRank = RANKING.find((r) => r.isCurrentUser);
+  const currentUserRank = ranking.find((r) => r.isCurrentUser);
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -253,31 +270,28 @@ export default function PainelPage() {
             <CardDescription>Top 5 da semana</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {RANKING.slice(0, 5).map((r) => (
+            {ranking.slice(0, 5).map((r) => (
               <div
                 key={r.userId}
-                className={`flex items-center gap-3 rounded-md p-2 ${
-                  r.isCurrentUser ? "bg-primary/5 ring-1 ring-primary/20" : ""
-                }`}
+                className={`flex items-center gap-3 rounded-md p-2 ${r.isCurrentUser ? "bg-primary/5 ring-1 ring-primary/20" : ""
+                  }`}
               >
                 <div
-                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${
-                    r.rank === 1
-                      ? "bg-gold text-white"
-                      : r.rank === 2
+                  className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${r.rank === 1
+                    ? "bg-gold text-white"
+                    : r.rank === 2
                       ? "bg-muted-foreground/30 text-foreground"
                       : r.rank === 3
-                      ? "bg-amber-600/20 text-amber-700 dark:text-amber-400"
-                      : "bg-muted text-muted-foreground"
-                  }`}
+                        ? "bg-amber-600/20 text-amber-700 dark:text-amber-400"
+                        : "bg-muted text-muted-foreground"
+                    }`}
                 >
                   {r.rank}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p
-                    className={`text-sm truncate ${
-                      r.isCurrentUser ? "font-semibold text-primary" : "font-medium"
-                    }`}
+                    className={`text-sm truncate ${r.isCurrentUser ? "font-semibold text-primary" : "font-medium"
+                      }`}
                   >
                     {r.name}
                   </p>

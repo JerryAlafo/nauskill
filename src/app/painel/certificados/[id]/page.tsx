@@ -16,6 +16,7 @@ import { CertificateView } from "@/components/shared/certificate-view";
 import { ComingSoonButton } from "@/components/shared/coming-soon";
 import { CERTIFICATES, getCertificateById } from "@/data/certificates";
 import { formatDate } from "@/lib/utils";
+import { auth } from "@/auth";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -26,9 +27,11 @@ export function generateStaticParams() {
 }
 
 export default async function CertificadoDetalhePage({ params }: PageProps) {
-  const { id } = await params;
-  const cert = getCertificateById(id);
-  if (!cert) notFound();
+  const [{ id }, session] = await Promise.all([params, auth()]);
+  const baseCert = getCertificateById(id);
+  if (!baseCert) notFound();
+  const realName = session?.user?.name ?? "";
+  const cert = realName ? { ...baseCert, holderName: realName } : baseCert;
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">

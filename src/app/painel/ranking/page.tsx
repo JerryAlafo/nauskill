@@ -1,3 +1,6 @@
+"use client";
+
+import { useSession } from "next-auth/react";
 import {
   Trophy,
   Medal,
@@ -17,9 +20,25 @@ import { Badge } from "@/components/ui/badge";
 import { RANKING } from "@/data/user";
 
 export default function RankingPage() {
-  const podium = RANKING.slice(0, 3);
-  const rest = RANKING.slice(3);
-  const me = RANKING.find((r) => r.isCurrentUser);
+  const { data: session } = useSession();
+  const realName = session?.user?.name ?? "";
+  const realInitials = realName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
+  // Substitui nome e iniciais do utilizador actual pelo dado real da sessão
+  const ranking = RANKING.map((r) =>
+    r.isCurrentUser && realName
+      ? { ...r, name: realName, initials: realInitials || r.initials }
+      : r
+  );
+
+  const podium = ranking.slice(0, 3);
+  const me = ranking.find((r) => r.isCurrentUser);
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -62,11 +81,8 @@ export default function RankingPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-2 items-end sm:gap-4">
-            {/* 2º */}
             <PodiumCard entry={podium[1]} place={2} height="h-32" />
-            {/* 1º */}
             <PodiumCard entry={podium[0]} place={1} height="h-40" />
-            {/* 3º */}
             <PodiumCard entry={podium[2]} place={3} height="h-28" />
           </div>
         </CardContent>
@@ -79,7 +95,7 @@ export default function RankingPage() {
         </CardHeader>
         <CardContent className="p-0">
           <div className="divide-y">
-            {RANKING.map((r) => (
+            {ranking.map((r) => (
               <div
                 key={r.userId}
                 className={`flex items-center gap-3 p-3 hover:bg-muted/40 transition-colors sm:gap-4 sm:p-4 ${
@@ -159,7 +175,7 @@ function PodiumCard({
   place,
   height,
 }: {
-  entry: (typeof RANKING)[0];
+  entry: (typeof RANKING)[0] & { name: string; initials: string };
   place: 1 | 2 | 3;
   height: string;
 }) {

@@ -13,8 +13,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CERTIFICATES } from "@/data/certificates";
 import { formatDate } from "@/lib/utils";
+import { auth } from "@/auth";
 
-export default function CertificadosPage() {
+export default async function CertificadosPage() {
+  const session = await auth();
+  const realName = session?.user?.name ?? "";
+  const certificates = realName
+    ? CERTIFICATES.map((c) => ({ ...c, holderName: realName }))
+    : CERTIFICATES;
+
   return (
     <div className="space-y-6 max-w-7xl">
       <div>
@@ -29,12 +36,12 @@ export default function CertificadosPage() {
         <SummaryCard
           icon={Award}
           label="Total emitidos"
-          value={CERTIFICATES.length.toString()}
+          value={certificates.length.toString()}
         />
         <SummaryCard
           icon={CheckCircle2}
           label="Válidos"
-          value={CERTIFICATES.length.toString()}
+          value={certificates.length.toString()}
         />
         <SummaryCard
           icon={Calendar}
@@ -44,7 +51,7 @@ export default function CertificadosPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {CERTIFICATES.map((cert) => (
+        {certificates.map((cert) => (
           <Card key={cert.id} className="overflow-hidden">
             <div className="h-2 bg-primary" />
             <CardContent className="p-5 space-y-4 sm:p-6">
